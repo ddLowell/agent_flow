@@ -1,9 +1,10 @@
 """Base Node - Abstract base class for all node types"""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 from enum import Enum
-from agentflow.core.context import Context
+# TODO: 待 Context 实现后取消注释
+# from agentflow.core.context import Context
 from pydantic import BaseModel, Field
 
 
@@ -53,13 +54,13 @@ class BaseNode(ABC):
         self.depends_on = config.get("depends_on", [])
 
     @abstractmethod
-    async def execute(self, inputs: Dict[str, Any], context: Context) -> NodeResult:
+    async def execute(self, inputs: Dict[str, Any], context: Any) -> NodeResult:
         """
         执行节点逻辑（异步方法）
 
         Args:
             inputs: 输入数据
-            context: 执行上下文
+            context: 执行上下文（待实现）
 
         Returns:
             NodeResult: 执行结果
@@ -89,12 +90,12 @@ class BaseNode(ABC):
         # 默认验证逻辑，子类可以重写
         return True
 
-    def get_required_inputs(self) -> list[str]:
+    def get_required_inputs(self) -> List[str]:
         """
         获取必需的输入字段
 
         Returns:
-            list[str]: 必需字段列表
+            List[str]: 必需字段列表
         """
         # 默认返回空列表，子类可以重写
         return []

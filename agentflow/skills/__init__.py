@@ -1,10 +1,11 @@
 """Skill management for AgentFlow"""
 
-from agentflow.skills.base import BaseSkill, SkillRegistry
-from agentflow.skills.marketplace import SkillMarketplace
+from agentflow.skills.base import BaseSkill, SkillConfig
+from agentflow.skills.registry import SkillRegistry, register_skill
 
 __all__ = [
     "BaseSkill",
+    "SkillConfig",
     "SkillRegistry",
-    "SkillMarketplace",
+    "register_skill",
 ]

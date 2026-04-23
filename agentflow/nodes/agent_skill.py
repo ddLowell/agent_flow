@@ -1,6 +1,6 @@
 """Agent Skill Node - Use AI skills"""
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from agentflow.nodes.base import BaseNode, NodeResult, NodeType
 from agentflow.nodes.registry import register_node
 
@@ -31,7 +31,7 @@ class AgentSkillNode(BaseNode):
 
         return True
 
-    def get_required_inputs(self) -> list[str]:
+    def get_required_inputs(self) -> List[str]:
         """获取必需的输入字段"""
         # Agent Skill 的输入由技能定义决定
         # 默认需要 task 或 prompt

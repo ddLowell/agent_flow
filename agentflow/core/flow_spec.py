@@ -1,7 +1,7 @@
 """FlowSpec - YAML-based workflow definition specification"""
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
@@ -162,7 +162,7 @@ class FlowSpec(BaseModel):
         return errors
 
 
-def load_flow_spec(file_path: Path | str) -> FlowSpec:
+def load_flow_spec(file_path: Union[Path, str]) -> FlowSpec:
     """从文件加载 FlowSpec
 
     Args:
@@ -193,7 +193,7 @@ def load_flow_spec(file_path: Path | str) -> FlowSpec:
     return flow_spec
 
 
-def save_flow_spec(flow_spec: FlowSpec, file_path: Path | str) -> None:
+def save_flow_spec(flow_spec: FlowSpec, file_path: Union[Path, str]) -> None:
     """保存 FlowSpec 到文件
 
     Args:

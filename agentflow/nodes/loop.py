@@ -32,7 +32,7 @@ class LoopNode(BaseNode):
 
         return True
 
-    def get_required_inputs(self) -> list[str]:
+    def get_required_inputs(self) -> List[str]:
         """获取必需的输入字段"""
         # 循环节点不需要特定的输入字段
         return []

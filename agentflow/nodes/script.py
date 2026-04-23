@@ -2,7 +2,7 @@
 
 import asyncio
 import time
-from typing import Dict, Any
+from typing import Dict, Any, List
 from agentflow.nodes.base import BaseNode, NodeResult, NodeType
 from agentflow.nodes.registry import register_node
 
@@ -32,7 +32,7 @@ class ScriptNode(BaseNode):
 
         return True
 
-    def get_required_inputs(self) -> list[str]:
+    def get_required_inputs(self) -> List[str]:
         """获取必需的输入字段"""
         # Script 节点的输入由代码决定，这里返回空列表
         # 实际使用时可以从 inputs 配置中提取
