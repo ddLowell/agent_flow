@@ -3,8 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, List
 from enum import Enum
-# TODO: 待 Context 实现后取消注释
-# from agentflow.core.context import Context
+from agentflow.core.context import Context
 from pydantic import BaseModel, Field
 
 
@@ -54,13 +53,13 @@ class BaseNode(ABC):
         self.depends_on = config.get("depends_on", [])
 
     @abstractmethod
-    async def execute(self, inputs: Dict[str, Any], context: Any) -> NodeResult:
+    async def execute(self, inputs: Dict[str, Any], context: Context) -> NodeResult:
         """
         执行节点逻辑（异步方法）
 
         Args:
             inputs: 输入数据
-            context: 执行上下文（待实现）
+            context: 执行上下文
 
         Returns:
             NodeResult: 执行结果
