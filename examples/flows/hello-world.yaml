@@ -1,0 +1,68 @@
+apiVersion: agentflow.dev/v1
+kind: FlowSpec
+metadata:
+  name: hello-world-flow
+  version: "1.0.0"
+  description: "A simple hello world workflow"
+  author: "ddLowell"
+  tags: ["example", "test"]
+spec:
+  description: "This is a simple test flow"
+  stages:
+    - id: greeting-stage
+      name: "Greeting Stage"
+      description: "Generate a greeting message"
+      steps:
+        - id: create-greeting
+          type: script
+          name: "Create Greeting"
+          config:
+            language: python
+            code: |
+              def create_greeting(name):
+                  return f"Hello, {name}!"
+          inputs:
+            name: "${inputs.name}"
+          outputs:
+            greeting: "${result}"
+
+    - id: output-stage
+      name: "Output Stage"
+      description: "Output the greeting"
+      steps:
+        - id: print-message
+          type: script
+          name: "Print Message"
+          depends_on: ["create-greeting"]
+          config:
+            language: python
+            code: |
+              def print_message(message):
+                  print(message)
+                  return message
+          inputs:
+            message: "${stages.greeting-stage.steps.create-greeting.outputs.greeting}"
+          outputs:
+            result: "${result}"
+
+  inputs:
+    name:
+      type: string
+      required: true
+      default: "World"
+
+  outputs:
+    greeting:
+      type: string
+      source: "${stages.output-stage.steps.print-message.outputs.result}"
+
+  error_handling:
+    on_step_failure:
+      strategy: retry
+      max_retries: 3
+      retry_delay: 5
+    on_stage_failure:
+      strategy: stop
+
+  learning:
+    enabled: false
