@@ -1,0 +1,226 @@
+{
+  "mcp_version": "1.0.0",
+  "server": {
+    "name": "file-system-server",
+    "version": "1.0.0",
+    "description": "提供文件系统操作、文件读写和目录管理服务",
+    "author": "AgentFlow Team",
+    "license": "MIT",
+    "homepage": "https://github.com/agentflow/mcp-filesystem",
+    "repository": "https://github.com/agentflow/mcp-filesystem.git",
+    "tags": ["filesystem", "file", "directory", "io"],
+    "icon": "📁"
+  },
+  "transport": {
+    "type": "stdio",
+    "config": {
+      "command": "python",
+      "args": ["${SERVER_DIR}/fs_server.py"],
+      "env": {
+        "ALLOWED_PATHS": "${ENV:FS_ALLOWED_PATHS}",
+        "MAX_FILE_SIZE": "10485760"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "读取文件内容",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "文件路径"
+          },
+          "offset": {
+            "type": "integer",
+            "description": "读取起始位置",
+            "default": 0
+          },
+          "limit": {
+            "type": "integer",
+            "description": "最大读取字节数",
+            "default": 100000
+          },
+          "encoding": {
+            "type": "string",
+            "description": "文件编码",
+            "default": "utf-8"
+          }
+        },
+        "required": ["path"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "content": {"type": "string"},
+          "size": {"type": "integer"},
+          "encoding": {"type": "string"},
+          "is_truncated": {"type": "boolean"}
+        }
+      }
+    },
+    {
+      "name": "write_file",
+      "description": "写入文件内容",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "文件路径"
+          },
+          "content": {
+            "type": "string",
+            "description": "文件内容"
+          },
+          "encoding": {
+            "type": "string",
+            "description": "文件编码",
+            "default": "utf-8"
+          },
+          "append": {
+            "type": "boolean",
+            "description": "是否追加模式",
+            "default": false
+          }
+        },
+        "required": ["path", "content"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "bytes_written": {"type": "integer"},
+          "path": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "list_directory",
+      "description": "列出目录内容",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "目录路径"
+          },
+          "recursive": {
+            "type": "boolean",
+            "description": "是否递归列出子目录",
+            "default": false
+          },
+          "pattern": {
+            "type": "string",
+            "description": "文件匹配模式（如 *.py）",
+            "default": "*"
+          }
+        },
+        "required": ["path"]
+      },
+      "returns": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "path": {"type": "string"},
+            "type": {"type": "string", "enum": ["file", "directory"]},
+            "size": {"type": "integer"},
+            "modified": {"type": "string"},
+            "permissions": {"type": "string"}
+          }
+        }
+      }
+    },
+    {
+      "name": "create_directory",
+      "description": "创建目录",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "目录路径"
+          },
+          "parents": {
+            "type": "boolean",
+            "description": "是否创建父目录",
+            "default": true
+          }
+        },
+        "required": ["path"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "created": {"type": "boolean"},
+          "path": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "delete_path",
+      "description": "删除文件或目录",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "要删除的路径"
+          },
+          "recursive": {
+            "type": "boolean",
+            "description": "递归删除目录",
+            "default": false
+          }
+        },
+        "required": ["path"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "deleted": {"type": "boolean"},
+          "path": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "get_file_info",
+      "description": "获取文件或目录的详细信息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "文件或目录路径"
+          }
+        },
+        "required": ["path"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "path": {"type": "string"},
+          "type": {"type": "string"},
+          "size": {"type": "integer"},
+          "created": {"type": "string"},
+          "modified": {"type": "string"},
+          "accessed": {"type": "string"},
+          "permissions": {"type": "string"},
+          "is_symlink": {"type": "boolean"}
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "fs://allowed-paths",
+      "name": "Allowed Paths",
+      "description": "List of paths that can be accessed",
+      "mimeType": "application/json"
+    }
+  ]
+}

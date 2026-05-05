@@ -11,10 +11,12 @@ class NodeConfig(BaseModel):
 
     type: str = Field(..., description="节点类型")
     name: Optional[str] = Field(None, description="节点名称")
-    depends_on: Optional[List[str]] = Field(default_factory=list, description="依赖的前置节点 ID")
+    depends_on: List[str] = Field(default_factory=list, description="依赖的前置节点 ID")
     config: Dict[str, Any] = Field(default_factory=dict, description="节点特定配置")
     inputs: Dict[str, Any] = Field(default_factory=dict, description="输入配置")
     outputs: Dict[str, str] = Field(default_factory=dict, description="输出映射")
+
+    id: Optional[str] = Field(None, description="节点 ID")
 
     @field_validator("type")
     @classmethod
@@ -152,9 +154,9 @@ class FlowSpec(BaseModel):
 
         # 2. 检查阶段内节点唯一性
         for stage in self.get_stages():
-            node_ids = [step.depends_on for step in stage.steps if step.depends_on]
+            _node_ids = [step.depends_on for step in stage.steps if step.depends_on]
             # 检查依赖是否存在
-            all_node_ids = [f"{stage.id}.{step.id}" for step in stage.steps]
+            _all_node_ids = [f"{stage.id}.{step.id}" for step in stage.steps]
 
         # 3. 检查循环依赖
         # TODO: 实现循环依赖检测

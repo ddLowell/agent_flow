@@ -1,0 +1,135 @@
+/* 导入深色主题 */
+@import './dark-theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color-scheme: dark;
+  color: #e2e8f0;
+  background-color: #0f172a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #0f172a;
+  background-attachment: fixed;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%);
+  background-attachment: fixed;
+}
+
+@layer utilities {
+  /* 卡片效果 - 完全不透明，清晰可辨 */
+  .glass-effect {
+    background: #ffffff;
+    border: 2px solid #e0e7ff;
+    box-shadow: 0 4px 12px rgba(0, 50, 100, 0.15);
+  }
+
+  /* 深色侧边栏 - 深蓝背景 */
+  .glass-dark {
+    background: #0a1628;
+    border-right: 2px solid #1e3a5f;
+  }
+
+  /* 主内容区域背景 */
+  .main-content {
+    background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 50%, #ffffff 100%);
+  }
+
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(135deg, #0066cc, #0099ff);
+    padding: 2px;
+    border-radius: 0.75rem;
+  }
+
+  .gradient-border > * {
+    background: white;
+    border-radius: 0.65rem;
+  }
+}
+
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

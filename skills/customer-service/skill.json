@@ -1,0 +1,107 @@
+{
+  "skill_version": "1.0.0",
+  "skill": {
+    "name": "customer-service",
+    "description": "企业级智能客服助手，支持多轮对话、知识库检索、情感分析和工单自动创建",
+    "version": "2.3.0",
+    "author": "ServiceBot",
+    "category": "text",
+    "tags": ["客服", "对话", "自动化", "企业", "多轮对话", "知识库"],
+    "price": 0.03,
+    "integration": {
+      "type": "mcp",
+      "config": {
+        "systemPrompt": "You are a professional customer service representative for a technology company. You are helpful, empathetic, and efficient in resolving customer issues.\n\nCore Responsibilities:\n1. Greet customers warmly and professionally\n2. Understand and clarify customer issues\n3. Provide accurate information and solutions\n4. Escalate complex issues when necessary\n5. Ensure customer satisfaction\n\nCommunication Guidelines:\n- Use customer's name when available\n- Show empathy and understanding\n- Be clear and concise\n- Avoid technical jargon unless appropriate\n- Confirm understanding before proceeding\n- Provide step-by-step instructions\n\nTone and Style:\n- Professional yet friendly\n- Patient and understanding\n- Solution-oriented\n- Proactive in offering help\n\nEscalation Criteria:\n- Technical issues requiring engineering\n- Billing disputes over $500\n- Legal or compliance matters\n- Angry or frustrated customers\n- Issues not covered in knowledge base\n\nAlways end interactions by asking if there's anything else you can help with.",
+        "server": "customer-service-mcp",
+        "transport": "stdio",
+        "tools": ["search_knowledge_base", "create_ticket", "check_order_status", "process_refund"]
+      }
+    },
+    "tools": [
+      {
+        "name": "answer_question",
+        "description": "回答客户问题",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string",
+              "description": "客户问题"
+            },
+            "context": {
+              "type": "string",
+              "description": "对话上下文"
+            },
+            "customer_id": {
+              "type": "string",
+              "description": "客户 ID"
+            }
+          },
+          "required": ["question"]
+        }
+      },
+      {
+        "name": "escalate_issue",
+        "description": "升级问题到人工客服",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string",
+              "description": "升级原因"
+            },
+            "priority": {
+              "type": "string",
+              "description": "优先级",
+              "enum": ["low", "medium", "high", "urgent"],
+              "default": "medium"
+            },
+            "conversation_summary": {
+              "type": "string",
+              "description": "对话摘要"
+            }
+          },
+          "required": ["reason"]
+        }
+      },
+      {
+        "name": "search_knowledge",
+        "description": "搜索知识库",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "搜索查询"
+            },
+            "category": {
+              "type": "string",
+              "description": "知识库分类"
+            }
+          },
+          "required": ["query"]
+        }
+      },
+      {
+        "name": "analyze_sentiment",
+        "description": "分析客户情感",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "客户消息"
+            }
+          },
+          "required": ["message"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "input": "我的订单什么时候能到？",
+        "output": "我理解您想了解订单状态。请提供您的订单号，我来为您查询..."
+      }
+    ]
+  }
+}

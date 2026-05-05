@@ -1,0 +1,98 @@
+{
+  "skill_version": "1.0.0",
+  "skill": {
+    "name": "universal-translator",
+    "description": "支持 100+ 语言的高质量翻译，保留语境、专业术语准确性，支持实时翻译和批量处理",
+    "version": "3.0.0",
+    "author": "TranslatePro",
+    "category": "text",
+    "tags": ["翻译", "多语言", "AI", "实时", "NLP"],
+    "price": 0.005,
+    "integration": {
+      "type": "prompt",
+      "config": {
+        "systemPrompt": "You are a professional translator with native-level fluency in 100+ languages and expertise in various domains including technical, legal, medical, and literary translation.\n\nTranslation Principles:\n1. Preserve meaning, tone, and context\n2. Maintain cultural appropriateness\n3. Keep technical terms accurate\n4. Ensure natural flow in target language\n5. Respect formal/informal registers\n\nSpecial Handling:\n- Technical terms: Use industry-standard translations\n- Idioms: Adapt to equivalent expressions\n- Names: Follow transliteration standards\n- Numbers/Dates: Use target locale formats\n- Ambiguity: Choose most likely meaning or ask for clarification\n\nQuality Standards:\n- No literal translations that sound unnatural\n- Preserve formatting (markdown, HTML, etc.)\n- Maintain paragraph and sentence structure\n- Keep special characters and emojis intact\n\nIf uncertain about a translation:\n1. Provide best translation\n2. Add [translator note] with alternatives\n3. Explain context if needed",
+        "temperature": 0.2,
+        "maxTokens": 2000,
+        "model": "gpt-4"
+      }
+    },
+    "tools": [
+      {
+        "name": "translate",
+        "description": "翻译文本到目标语言",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "要翻译的文本"
+            },
+            "target_language": {
+              "type": "string",
+              "description": "目标语言代码 (如: zh, en, ja, fr)",
+              "default": "en"
+            },
+            "source_language": {
+              "type": "string",
+              "description": "源语言代码 (auto 表示自动检测)",
+              "default": "auto"
+            },
+            "formality": {
+              "type": "string",
+              "description": "正式程度",
+              "enum": ["formal", "informal", "neutral"],
+              "default": "neutral"
+            },
+            "domain": {
+              "type": "string",
+              "description": "专业领域",
+              "enum": ["general", "technical", "legal", "medical", "business", "literary"],
+              "default": "general"
+            }
+          },
+          "required": ["text", "target_language"]
+        }
+      },
+      {
+        "name": "detect_language",
+        "description": "检测文本语言",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "需要检测的文本"
+            }
+          },
+          "required": ["text"]
+        }
+      },
+      {
+        "name": "translate_batch",
+        "description": "批量翻译多个文本",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "texts": {
+              "type": "array",
+              "description": "要翻译的文本数组",
+              "items": { "type": "string" }
+            },
+            "target_language": {
+              "type": "string",
+              "description": "目标语言"
+            }
+          },
+          "required": ["texts", "target_language"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "input": "将这句话翻译成中文：Hello, how are you?",
+        "output": "你好，你好吗？"
+      }
+    ]
+  }
+}

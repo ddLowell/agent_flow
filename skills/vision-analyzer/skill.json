@@ -1,0 +1,122 @@
+{
+  "skill_version": "1.0.0",
+  "skill": {
+    "name": "vision-analyzer",
+    "description": "先进的计算机视觉分析助手，支持物体检测、OCR 文字识别、场景理解、图像描述和人脸分析",
+    "version": "1.8.0",
+    "author": "VisionAI",
+    "category": "vision",
+    "tags": ["视觉", "图像", "OCR", "识别", "计算机视觉", "AI"],
+    "price": 0.025,
+    "integration": {
+      "type": "function",
+      "config": {
+        "systemPrompt": "You are a computer vision expert capable of analyzing images with high accuracy and detail.\n\nYour capabilities:\n1. Object detection and recognition\n2. Text extraction (OCR)\n3. Scene and context understanding\n4. Image description and captioning\n5. Visual quality assessment\n6. Content moderation\n\nAnalysis Approach:\n- Start with overall scene description\n- Identify main subjects and objects\n- Note spatial relationships\n- Extract any visible text\n- Assess image quality and characteristics\n- Provide confidence levels for detections\n\nOutput Format:\n1. Scene Overview: Brief description of what's in the image\n2. Objects Detected: List with confidence scores\n3. Text Content: Any OCR results\n4. Visual Attributes: Colors, composition, style\n5. Context/Interpretation: What the image represents\n6. Quality Notes: Blur, lighting, resolution issues\n\nBe objective and precise. If uncertain, indicate confidence level.",
+        "functions": [
+          {
+            "name": "analyze_image",
+            "description": "分析图像内容",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "image_url": {
+                  "type": "string",
+                  "description": "图像 URL 或 base64"
+                },
+                "analysis_type": {
+                  "type": "string",
+                  "description": "分析类型",
+                  "enum": ["general", "objects", "text", "faces", "scenes"],
+                  "default": "general"
+                }
+              },
+              "required": ["image_url"]
+            }
+          },
+          {
+            "name": "extract_text",
+            "description": "从图像中提取文字 (OCR)",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "image_url": {
+                  "type": "string",
+                  "description": "图像 URL 或 base64"
+                },
+                "language": {
+                  "type": "string",
+                  "description": "文字语言",
+                  "default": "auto"
+                }
+              },
+              "required": ["image_url"]
+            }
+          },
+          {
+            "name": "detect_objects",
+            "description": "检测图像中的物体",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "image_url": {
+                  "type": "string",
+                  "description": "图像 URL 或 base64"
+                },
+                "confidence_threshold": {
+                  "type": "number",
+                  "description": "置信度阈值",
+                  "default": 0.5
+                }
+              },
+              "required": ["image_url"]
+            }
+          }
+        ]
+      }
+    },
+    "tools": [
+      {
+        "name": "analyze_image",
+        "description": "分析图像内容",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "image_url": {
+              "type": "string",
+              "description": "图像 URL"
+            },
+            "features": {
+              "type": "array",
+              "description": "分析特征",
+              "items": {
+                "type": "string",
+                "enum": ["objects", "text", "faces", "scenes", "colors"]
+              }
+            }
+          },
+          "required": ["image_url"]
+        }
+      },
+      {
+        "name": "extract_text",
+        "description": "OCR 文字识别",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "image_url": {
+              "type": "string",
+              "description": "图像 URL"
+            }
+          },
+          "required": ["image_url"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "input": "分析这张图片中的内容...",
+        "output": "图像分析结果：\n1. 场景：室内办公环境\n2. 检测到：笔记本电脑 (95%)、咖啡杯 (88%)..."
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "skill_version": "1.0.0",
+  "skill": {
+    "name": "smart-summarizer",
+    "description": "基于 AI 的智能文档摘要生成器，支持多语言、自定义长度，可提取关键信息和生成要点总结",
+    "version": "1.2.0",
+    "author": "AgentFlow Team",
+    "category": "document",
+    "tags": ["文档", "摘要", "AI", "多语言", "NLP", "文本处理"],
+    "price": 0.01,
+    "integration": {
+      "type": "prompt",
+      "config": {
+        "systemPrompt": "You are an expert document summarizer with deep understanding of various domains including technology, business, science, and humanities.\n\nYour task is to create high-quality summaries that:\n1. Capture the main ideas and key points\n2. Maintain the original tone and context\n3. Are concise yet comprehensive\n4. Preserve important details and data\n\nGuidelines:\n- Adapt summary length based on content complexity\n- Use clear, professional language\n- Structure with bullet points for key takeaways when appropriate\n- Highlight critical insights and conclusions\n- Maintain factual accuracy\n\nOutput format:\n- Brief overview (1-2 sentences)\n- Key points (3-5 bullet points)\n- Important details (if any)\n- Conclusion or action items (if applicable)",
+        "temperature": 0.3,
+        "maxTokens": 2000,
+        "model": "gpt-4"
+      }
+    },
+    "tools": [
+      {
+        "name": "summarize",
+        "description": "生成文档的智能摘要",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "需要摘要的文本内容"
+            },
+            "maxLength": {
+              "type": "integer",
+              "description": "摘要的最大长度（字数）",
+              "default": 200
+            },
+            "style": {
+              "type": "string",
+              "description": "摘要风格",
+              "enum": ["concise", "detailed", "bullet_points"],
+              "default": "concise"
+            },
+            "language": {
+              "type": "string",
+              "description": "输出语言",
+              "default": "auto"
+            }
+          },
+          "required": ["text"]
+        }
+      },
+      {
+        "name": "extract_keywords",
+        "description": "提取文本中的关键词",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "需要分析的文本"
+            },
+            "count": {
+              "type": "integer",
+              "description": "关键词数量",
+              "default": 10
+            }
+          },
+          "required": ["text"]
+        }
+      },
+      {
+        "name": "generate_tldr",
+        "description": "生成一句话 TL;DR",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "需要总结的文本"
+            }
+          },
+          "required": ["text"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "input": "请为这篇技术文档生成一个简洁的摘要...",
+        "output": "这篇文档介绍了..."
+      }
+    ]
+  }
+}

@@ -1,159 +1,140 @@
-/**
- * Dashboard Page - Flow overview and management
- */
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { 
+  Play, 
+  Plus, 
+  CheckCircle, 
+  Zap,
+  Database,
+  Globe
+} from 'lucide-react'
 
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { apiClient } from '@/api/client'
-import { FlowSpec } from '@/types/flowspec'
-import { formatTime, cn } from '@/utils'
-import { Plus, Play, FileText, Trash2 } from 'lucide-react'
+export default function Dashboard() {
+  const [flows] = useState([
+    {
+      id: '1',
+      name: '文档处理流程',
+      description: '自动化处理文档的完整流程',
+      status: 'completed',
+      steps: 5,
+      lastRun: '2小时前',
+    },
+    {
+      id: '2', 
+      name: '客户服务机器人',
+      description: '智能客户服务响应系统',
+      status: 'running',
+      steps: 8,
+      lastRun: '进行中',
+    },
+    {
+      id: '3',
+      name: '数据分析报告',
+      description: '自动生成数据分析报告',
+      status: 'pending',
+      steps: 6,
+      lastRun: '未运行',
+    },
+  ])
 
-interface FlowItem {
-  path: string
-  name: string
-  version: string
-  description: string
-  modifiedAt: string
-}
-
-export const Dashboard: React.FC = () => {
-  const navigate = useNavigate()
-  const [flows, setFlows] = useState<FlowItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    loadFlows()
-  }, [])
-
-  const loadFlows = async () => {
-    try {
-      setIsLoading(true)
-      const result = await apiClient.listFlows('./flows', true)
-      setFlows(result.flows || [])
-    } catch (err) {
-      setError(err.message || 'Failed to load flows')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleFlowClick = (flowPath: string) => {
-    navigate(`/editor/${encodeURIComponent(flowPath)}`)
-  }
-
-  const handleNewFlow = () => {
-    navigate('/editor')
-  }
-
-  const handleDeleteFlow = async (flowPath: string, event: React.MouseEvent) => {
-    event.stopPropagation()
-    if (!confirm('Are you sure you want to delete this flow?')) {
-      return
-    }
-
-    try {
-      await apiClient.deleteFlow(flowPath)
-      await loadFlows() // Reload flows
-    } catch (err) {
-      setError(err.message || 'Failed to delete flow')
-    }
-  }
-
-  const handleExecuteFlow = async (flowPath: string, event: React.MouseEvent) => {
-    event.stopPropagation()
-    navigate(`/monitor`)
-    // Could trigger execution here
-  }
+  const stats = [
+    { label: '总流程数', value: '12', icon: Globe, color: 'text-blue-500' },
+    { label: '活跃节点', value: '48', icon: Zap, color: 'text-green-500' },
+    { label: '今日执行', value: '156', icon: Play, color: 'text-purple-500' },
+    { label: '成功率', value: '98.5%', icon: CheckCircle, color: 'text-teal-500' },
+  ]
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Flows</h1>
-          <p className="text-gray-600 mt-1">Manage and monitor your agent workflows</p>
+    <div className="p-8 space-y-8 animate-fade-in">
+      {/* 顶部欢迎区域 */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-primary opacity-90" />
+        <div className="relative glass-effect p-8 rounded-2xl text-white">
+          <h1 className="text-4xl font-bold mb-2">欢迎回来！</h1>
+          <p className="text-lg opacity-90">管理您的 AI 智能体工作流程</p>
         </div>
-        <button
-          onClick={handleNewFlow}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus size={20} />
-          <span className="font-medium">New Flow</span>
-        </button>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-800 font-medium">{error}</p>
-        </div>
-      )}
+      {/* 统计卡片 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="glass-effect p-6 rounded-xl hover:shadow-lg transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                </div>
+                <Icon className={`w-8 h-8 ${stat.color}`} />
+              </div>
+            </motion.div>
+          )
+        })}
+      </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <>
-          {flows.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-lg border-2 border-dashed border-gray-300">
-              <FileText size={64} className="mx-auto mb-4 text-gray-400" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No flows yet</h3>
-              <p className="text-gray-600 mb-6">Create your first agent workflow to get started</p>
-              <button
-                onClick={handleNewFlow}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+      {/* 快速操作 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 glass-effect p-6 rounded-xl">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">最近流程</h2>
+            <button className="text-primary-600 hover:text-primary-700 font-medium text-sm">
+              查看全部
+            </button>
+          </div>
+          <div className="space-y-4">
+            {flows.map((flow, index) => (
+              <motion.div
+                key={flow.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center justify-between p-4 bg-white/50 rounded-lg hover:bg-white/80 transition-all cursor-pointer"
               >
-                Create Your First Flow
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {flows.map((flow) => (
-                <div
-                  key={flow.path}
-                  onClick={() => handleFlowClick(flow.path)}
-                  className="bg-white rounded-lg border-2 border-gray-200 p-6 cursor-pointer hover:border-blue-300 hover:shadow-lg transition-all group"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
-                        {flow.name}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">{flow.version}</p>
-                    </div>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={(e) => handleExecuteFlow(flow.path, e)}
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                        title="Execute"
-                      >
-                        <Play size={16} />
-                      </button>
-                      <button
-                        onClick={(e) => handleDeleteFlow(flow.path, e)}
-                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <p className="text-gray-600 mb-4 line-clamp-2 min-h-[2.5rem]">
-                    {flow.description || 'No description provided'}
-                  </p>
-
-                  <div className="text-sm text-gray-500 flex items-center gap-2">
-                    <span className="font-medium">Modified:</span>
-                    <span>{formatTime(flow.modifiedAt)}</span>
+                <div className="flex items-center gap-4">
+                  <div className={`w-2 h-2 rounded-full ${
+                    flow.status === 'completed' ? 'bg-green-500' :
+                    flow.status === 'running' ? 'bg-blue-500' :
+                    'bg-gray-400'
+                  }`} />
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{flow.name}</h3>
+                    <p className="text-sm text-gray-600">{flow.description}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+                <div className="text-right">
+                  <p className="text-sm text-gray-600">{flow.steps} 步骤</p>
+                  <p className="text-xs text-gray-400">{flow.lastRun}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-effect p-6 rounded-xl">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">快速操作</h2>
+          <div className="space-y-3">
+            <button className="w-full flex items-center gap-3 p-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
+              <Plus className="w-5 h-5" />
+              <span className="font-medium">创建新流程</span>
+            </button>
+            <button className="w-full flex items-center gap-3 p-4 bg-accent-500 text-white rounded-lg hover:bg-accent-600 transition-colors">
+              <Play className="w-5 h-5" />
+              <span className="font-medium">运行现有流程</span>
+            </button>
+            <button className="w-full flex items-center gap-3 p-4 bg-white/70 text-gray-900 rounded-lg hover:bg-white/90 transition-colors border border-gray-200">
+              <Database className="w-5 h-5" />
+              <span className="font-medium">浏览市场</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

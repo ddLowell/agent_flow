@@ -5,17 +5,59 @@
 """
 
 import asyncio
-import json
-from typing import Dict, Any, Optional
-from mcp.server import Server
-from mcp.server.models import InitializationOptions
-from mcp.types import (
-    Tool,
-    TextContent,
-    ImageContent,
-    EmbeddedResource,
-)
-import httpx
+from typing import Any
+
+try:
+    from mcp.server import Server
+    from mcp.server.models import InitializationOptions
+    from mcp.types import Tool, TextContent
+    from mcp.server.stdio import stdio_server
+except ImportError:
+    # MCP SDK 未安装时提供 mock 实现
+    class Server:
+        def __init__(self, name: str, version: str):
+            self.name = name
+            self.version = version
+            self.NOTIFICATION_OPTIONS = {}
+
+        def list_tools(self):
+            def decorator(func):
+                return func
+            return decorator
+
+        def call_tool(self):
+            def decorator(func):
+                return func
+            return decorator
+
+        def get_capabilities(self, **kwargs):
+            return {}
+
+        async def run(self, read_stream, write_stream, options):
+            pass
+
+    class InitializationOptions:
+        def __init__(self, server_name: str, server_version: str, capabilities: dict):
+            self.server_name = server_name
+            self.server_version = server_version
+            self.capabilities = capabilities
+
+    class Tool:
+        def __init__(self, name: str, description: str, inputSchema: dict):
+            self.name = name
+            self.description = description
+            self.inputSchema = inputSchema
+
+    class TextContent:
+        def __init__(self, type: str, text: str):
+            self.type = type
+            self.text = text
+
+    class stdio_server:
+        async def __aenter__(self):
+            return (None, None)
+        async def __aexit__(self, *args):
+            pass
 
 
 # 创建 MCP Server 实例
@@ -72,7 +114,7 @@ async def handle_list_tools() -> list[Tool]:
 
 
 @server.call_tool()
-async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> list[TextContent]:
+async def handle_call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
     """
     处理工具调用
     """
@@ -84,7 +126,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> list[TextCon
         raise ValueError(f"Unknown tool: {name}")
 
 
-async def get_current_weather(arguments: Dict[str, Any]) -> list[TextContent]:
+async def get_current_weather(arguments: dict[str, Any]) -> list[TextContent]:
     """
     获取当前天气
 
@@ -94,20 +136,21 @@ async def get_current_weather(arguments: Dict[str, Any]) -> list[TextContent]:
     Returns:
         list[TextContent]: 天气信息
     """
-    city = arguments.get("city", "Unknown")
-    unit = arguments.get("unit", "celsius")
+    city: str = arguments.get("city", "Unknown")
+    unit: str = arguments.get("unit", "celsius")
 
     try:
         # 模拟天气 API 调用
         # 实际使用时可以接入真实的天气 API
         weather_data = await fetch_weather_data(city, unit)
 
+        unit_symbol: str = unit[0].upper() if isinstance(unit, str) else 'C'
         result = f"""
 Weather Report for {city}
 {'=' * 40}
 
 Current Conditions:
-- Temperature: {weather_data['temperature']}°{unit[0].upper()}
+- Temperature: {weather_data['temperature']}°{unit_symbol}
 - Humidity: {weather_data['humidity']}%
 - Condition: {weather_data['condition']}
 - Wind: {weather_data['wind_speed']} km/h
@@ -120,7 +163,7 @@ Last Updated: {weather_data['timestamp']}
         return [TextContent(type="text", text=f"Error fetching weather: {str(e)}")]
 
 
-async def get_weather_forecast(arguments: Dict[str, Any]) -> list[TextContent]:
+async def get_weather_forecast(arguments: dict[str, Any]) -> list[TextContent]:
     """
     获取天气预报
 
@@ -130,30 +173,31 @@ async def get_weather_forecast(arguments: Dict[str, Any]) -> list[TextContent]:
     Returns:
         list[TextContent]: 天气预报
     """
-    city = arguments.get("city", "Unknown")
-    unit = arguments.get("unit", "celsius")
+    city: str = arguments.get("city", "Unknown")
+    unit: str = arguments.get("unit", "celsius")
 
     try:
         # 模拟天气预报 API 调用
         forecast_data = await fetch_forecast_data(city, unit)
 
+        unit_symbol: str = unit[0].upper() if isinstance(unit, str) else 'C'
         result = f"""
 3-Day Weather Forecast for {city}
 {'=' * 50}
 
 Day 1 - {forecast_data[0]['date']}:
-- High: {forecast_data[0]['high']}°{unit[0].upper()}
-- Low: {forecast_data[0]['low']}°{unit[0].upper()}
+- High: {forecast_data[0]['high']}°{unit_symbol}
+- Low: {forecast_data[0]['low']}°{unit_symbol}
 - Condition: {forecast_data[0]['condition']}
 
 Day 2 - {forecast_data[1]['date']}:
-- High: {forecast_data[1]['high']}°{unit[0].upper()}
-- Low: {forecast_data[1]['low']}°{unit[0].upper()}
+- High: {forecast_data[1]['high']}°{unit_symbol}
+- Low: {forecast_data[1]['low']}°{unit_symbol}
 - Condition: {forecast_data[1]['condition']}
 
 Day 3 - {forecast_data[2]['date']}:
-- High: {forecast_data[2]['high']}°{unit[0].upper()}
-- Low: {forecast_data[2]['low']}°{unit[0].upper()}
+- High: {forecast_data[2]['high']}°{unit_symbol}
+- Low: {forecast_data[2]['low']}°{unit_symbol}
 - Condition: {forecast_data[2]['condition']}
 """
         return [TextContent(type="text", text=result)]
@@ -162,7 +206,7 @@ Day 3 - {forecast_data[2]['date']}:
         return [TextContent(type="text", text=f"Error fetching forecast: {str(e)}")]
 
 
-async def fetch_weather_data(city: str, unit: str) -> Dict[str, Any]:
+async def fetch_weather_data(city: str, unit: str) -> dict[str, Any]:
     """
     获取天气数据（模拟）
 
@@ -193,7 +237,7 @@ async def fetch_weather_data(city: str, unit: str) -> Dict[str, Any]:
     }
 
 
-async def fetch_forecast_data(city: str, unit: str) -> list[Dict[str, Any]]:
+async def fetch_forecast_data(city: str, unit: str) -> list[dict[str, Any]]:
     """
     获取天气预报数据（模拟）
 
@@ -231,8 +275,6 @@ async def fetch_forecast_data(city: str, unit: str) -> list[Dict[str, Any]]:
 async def main():
     """启动 MCP Server"""
     # 从 stdio 运行服务器（标准 MCP 传输方式）
-    from mcp.server.stdio import stdio_server
-
     async with stdio_server() as (read_stream, write_stream):
         await server.run(
             read_stream,

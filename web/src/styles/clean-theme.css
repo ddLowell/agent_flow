@@ -1,0 +1,212 @@
+/**
+ * 清晰明亮主题配置
+ * 优先考虑可读性和视觉清晰度
+ */
+
+:root {
+  /* 基础文字颜色 - 提高对比度 */
+  --text-primary: #001133;
+  --text-secondary: #112233;
+  --text-muted: #334455;
+  --text-light: #556677;
+  
+  /* 背景颜色 - 更明亮 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8faff;
+  --bg-tertiary: #f0f2ff;
+  --bg-elevated: #ffffff;
+  
+  /* 主色调 - 更鲜艳的蓝色 */
+  --primary-50: #e0f7ff;
+  --primary-100: #b3ecff;
+  --primary-200: #7dd3ff;
+  --primary-300: #4db8ff;
+  --primary-400: #0095ff;
+  --primary-500: #0066cc;
+  --primary-600: #004499;
+  --primary-700: #003366;
+  --primary-800: #002244;
+  --primary-900: #001122;
+  
+  /* 辅助色 - 明亮青色 */
+  --accent-50: #e0f9ff;
+  --accent-100: #b3f0ff;
+  --accent-200: #7de6ff;
+  --accent-300: #4dcbff;
+  --accent-400: #00b3ff;
+  --accent-500: #0099cc;
+  --accent-600: #007799;
+  --accent-700: #005566;
+  --accent-800: #003344;
+  --accent-900: #002222;
+  
+  /* 状态颜色 */
+  --success-500: #10b981;
+  --warning-500: #f59e0b;
+  --error-500: #ef4444;
+  --info-500: #3b82f6;
+  
+  /* 边框和阴影 */
+  --border-light: #e8eaff;
+  --border-medium: #d8e0ff;
+  --border-strong: #c8d0e8;
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.12);
+  
+  /* 玻璃效果 */
+  --glass-light: rgba(255, 255, 255, 0.95);
+  --glass-medium: rgba(255, 255, 255, 0.9);
+  --glass-dark: rgba(0, 34, 68, 0.95);
+  
+  /* 渐变 */
+  --gradient-primary: linear-gradient(135deg, #4db8ff 0%, #0095ff 50%, #0066cc 100%);
+  --gradient-accent: linear-gradient(135deg, #4dcbff 0%, #00b3ff 100%);
+  --gradient-clean: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+}
+
+/* 应用清晰主题 */
+body {
+  color: var(--text-primary);
+  background: var(--gradient-clean);
+}
+
+/* 提高文字对比度 */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+
+/* 提高背景亮度 */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+
+/* 清晰的玻璃效果 */
+.glass-clear {
+  background: var(--glass-light);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-dark-clear {
+  background: var(--glass-dark);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 150, 255, 0.2);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 提高卡片对比度 */
+.card-elevated {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+  border-radius: 1rem;
+}
+
+/* 提高按钮可见性 */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* 提高输入框可见性 */
+.input-clear {
+  background: white;
+  border: 2px solid var(--border-light);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.input-clear:focus {
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(0, 150, 255, 0.1);
+}
+
+/* 提高链接可见性 */
+.link-clear {
+  color: var(--primary-500);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link-clear:hover {
+  color: var(--primary-600);
+  text-decoration: underline;
+}
+
+/* 提高状态标签可见性 */
+.badge-success {
+  background: #d1fae5;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.badge-error {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.badge-info {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 600;
+}
+
+/* 提高导航可见性 */
+.nav-active {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.nav-inactive {
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.nav-inactive:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+/* 提高图标可见性 */
+.icon-primary { color: var(--primary-500); }
+.icon-secondary { color: var(--text-secondary); }
+.icon-muted { color: var(--text-muted); }
+
+/* 提高分割线可见性 */
+.divider-light {
+  height: 1px;
+  background: var(--border-medium);
+}
+
+/* 提高卡片悬停效果 */
+.card-hover {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-300);
+}

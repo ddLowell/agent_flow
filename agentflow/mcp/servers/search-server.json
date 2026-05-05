@@ -1,0 +1,165 @@
+{
+  "mcp_version": "1.0.0",
+  "server": {
+    "name": "search-server",
+    "version": "1.0.0",
+    "description": "提供网络搜索、新闻查询和知识图谱检索服务",
+    "author": "AgentFlow Team",
+    "license": "MIT",
+    "homepage": "https://github.com/agentflow/mcp-search",
+    "repository": "https://github.com/agentflow/mcp-search.git",
+    "tags": ["search", "web", "news", "knowledge"],
+    "icon": "🔍"
+  },
+  "transport": {
+    "type": "http",
+    "config": {
+      "baseUrl": "https://api.search.example.com/v1",
+      "headers": {
+        "Authorization": "Bearer ${ENV:SEARCH_API_KEY}",
+        "Content-Type": "application/json"
+      },
+      "timeout": 30000
+    }
+  },
+  "tools": [
+    {
+      "name": "web_search",
+      "description": "执行网络搜索，返回相关网页结果",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "搜索关键词"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "返回结果数量",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 50
+          },
+          "safe_search": {
+            "type": "boolean",
+            "description": "启用安全搜索",
+            "default": true
+          },
+          "language": {
+            "type": "string",
+            "description": "搜索结果语言",
+            "default": "zh",
+            "enum": ["zh", "en", "ja", "ko", "fr", "de", "es"]
+          }
+        },
+        "required": ["query"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {"type": "string"},
+                "url": {"type": "string"},
+                "snippet": {"type": "string"},
+                "published_date": {"type": "string"}
+              }
+            }
+          },
+          "total": {"type": "integer"},
+          "query_time": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "news_search",
+      "description": "搜索最新新闻资讯",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "新闻搜索关键词"
+          },
+          "days": {
+            "type": "integer",
+            "description": "搜索最近几天的新闻",
+            "default": 7,
+            "minimum": 1,
+            "maximum": 30
+          },
+          "category": {
+            "type": "string",
+            "description": "新闻分类",
+            "enum": ["general", "technology", "business", "sports", "entertainment", "science", "health"],
+            "default": "general"
+          }
+        },
+        "required": ["query"]
+      },
+      "returns": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": {"type": "string"},
+            "source": {"type": "string"},
+            "url": {"type": "string"},
+            "summary": {"type": "string"},
+            "published_at": {"type": "string"},
+            "image_url": {"type": "string"}
+          }
+        }
+      }
+    },
+    {
+      "name": "knowledge_graph",
+      "description": "查询知识图谱获取实体信息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "type": "string",
+            "description": "要查询的实体名称"
+          },
+          "type": {
+            "type": "string",
+            "description": "实体类型",
+            "enum": ["person", "organization", "location", "event", "concept", "product"]
+          }
+        },
+        "required": ["entity"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "type": {"type": "string"},
+          "attributes": {"type": "object"},
+          "related_entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "relation": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "search://trends",
+      "name": "Search Trends",
+      "description": "Current trending search topics",
+      "mimeType": "application/json"
+    }
+  ]
+}

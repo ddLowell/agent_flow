@@ -1,0 +1,164 @@
+{
+  "mcp_version": "1.0.0",
+  "server": {
+    "name": "weather-server",
+    "version": "1.0.0",
+    "description": "提供全球城市天气查询和预报服务",
+    "author": "AgentFlow Team",
+    "license": "MIT",
+    "homepage": "https://github.com/agentflow/mcp-weather",
+    "repository": "https://github.com/agentflow/mcp-weather.git",
+    "tags": ["weather", "forecast", "location"],
+    "icon": "🌤️"
+  },
+  "transport": {
+    "type": "stdio",
+    "config": {
+      "command": "python",
+      "args": ["${SERVER_DIR}/weather_server.py"],
+      "env": {},
+      "cwd": "${SERVER_DIR}"
+    }
+  },
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "获取指定城市的当前天气信息，包括温度、湿度、天气状况和风速",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "城市名称（如：Beijing, Shanghai, New York, Tokyo）"
+          },
+          "unit": {
+            "type": "string",
+            "description": "温度单位",
+            "enum": ["celsius", "fahrenheit"],
+            "default": "celsius"
+          }
+        },
+        "required": ["city"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "temperature": {
+            "type": "number",
+            "description": "当前温度"
+          },
+          "humidity": {
+            "type": "integer",
+            "description": "湿度百分比"
+          },
+          "condition": {
+            "type": "string",
+            "description": "天气状况"
+          },
+          "wind_speed": {
+            "type": "number",
+            "description": "风速 (km/h)"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "数据更新时间"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_forecast",
+      "description": "获取指定城市未来 3 天的天气预报",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "城市名称"
+          },
+          "unit": {
+            "type": "string",
+            "description": "温度单位",
+            "enum": ["celsius", "fahrenheit"],
+            "default": "celsius"
+          },
+          "days": {
+            "type": "integer",
+            "description": "预报天数",
+            "default": 3,
+            "minimum": 1,
+            "maximum": 7
+          }
+        },
+        "required": ["city"]
+      },
+      "returns": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "日期"
+            },
+            "high": {
+              "type": "number",
+              "description": "最高温度"
+            },
+            "low": {
+              "type": "number",
+              "description": "最低温度"
+            },
+            "condition": {
+              "type": "string",
+              "description": "天气状况"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "get_air_quality",
+      "description": "获取指定城市的空气质量指数 (AQI)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "城市名称"
+          }
+        },
+        "required": ["city"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "aqi": {
+            "type": "integer",
+            "description": "AQI 指数"
+          },
+          "level": {
+            "type": "string",
+            "description": "空气质量等级"
+          },
+          "pm25": {
+            "type": "number",
+            "description": "PM2.5 浓度"
+          },
+          "pm10": {
+            "type": "number",
+            "description": "PM10 浓度"
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "weather://cities",
+      "name": "Supported Cities",
+      "description": "List of cities supported by the weather service",
+      "mimeType": "application/json"
+    }
+  ]
+}

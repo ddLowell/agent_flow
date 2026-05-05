@@ -7,8 +7,9 @@ from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from agentflow.core.flow_spec import load_flow_spec, FlowSpec
+from agentflow.core.flow_spec import load_flow_spec
 from agentflow.core.pipeline import PipelineEngine
+from agentflow.core.context import VariableScope
 from agentflow.nodes import NodeRegistry
 
 app = typer.Typer(
@@ -130,20 +131,22 @@ def run(
 
                 import asyncio
                 asyncio.run(execute_with_monitor())
+                progress.remove_task(task)
+                console.print("\n[bold green]✓ Execution completed successfully![/bold green]")
             else:
                 # 普通执行
                 import asyncio
                 result = asyncio.run(engine.execute(inputs))
 
-            progress.remove_task(task)
+                progress.remove_task(task)
 
-        # 显示结果
-        console.print("\n[bold green]✓ Execution completed successfully![/bold green]")
+                # 显示结果
+                console.print("\n[bold green]✓ Execution completed successfully![/bold green]")
 
-        console.print("\n[bold]Results:[/bold]")
-        console.print(f"  Nodes executed: {result['metadata']['nodes_executed']}")
-        console.print(f"  Total time: {result['metadata']['total_time']:.2f}s")
-        console.print(f"  Total cost: ${result['metadata']['total_cost']:.4f}")
+                console.print("\n[bold]Results:[/bold]")
+                console.print(f"  Nodes executed: {result['metadata']['nodes_executed']}")
+                console.print(f"  Total time: {result['metadata']['total_time']:.2f}s")
+                console.print(f"  Total cost: ${result['metadata']['total_cost']:.4f}")
 
     except Exception as e:
         console.print(f"\n[red]✗ Execution failed:[/red] {str(e)}")
@@ -188,7 +191,7 @@ def status(
         # 显示变量
         console.print("\n[bold]Variables:[/bold]")
         variables = state.variables
-        for scope in ["global", "stage", "node"]:
+        for scope in [VariableScope.GLOBAL, VariableScope.STAGE, VariableScope.NODE]:
             scope_vars = variables.get(scope, {})
             if scope_vars:
                 console.print(f"\n  [{scope.upper()} Scope]")
@@ -243,11 +246,15 @@ def flows(
     for yaml_file in yaml_files:
         try:
             flow_spec = load_flow_spec(yaml_file)
+            if verbose:
+                desc = flow_spec.metadata.description or "-"
+            else:
+                desc = (flow_spec.metadata.description[:50] + "...") if flow_spec.metadata.description and len(flow_spec.metadata.description) > 50 else (flow_spec.metadata.description or "-")
             table.add_row(
                 flow_spec.metadata.name,
                 yaml_file.name,
                 flow_spec.metadata.version,
-                flow_spec.metadata.description or "-"
+                desc
             )
         except Exception:
             table.add_row(

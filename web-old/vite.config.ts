@@ -11,7 +11,6 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -27,8 +26,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'editor-vendor': ['reactflow'],
-          'ui-vendor': ['framer-motion', '@heroicons/react'],
+          'editor-vendor': ['reactflow', '@monaco-editor/react'],
+          'ui-vendor': ['lucide-react'],
           'charts-vendor': ['recharts'],
         },
       },

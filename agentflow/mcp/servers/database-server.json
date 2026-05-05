@@ -1,0 +1,188 @@
+{
+  "mcp_version": "1.0.0",
+  "server": {
+    "name": "database-server",
+    "version": "1.0.0",
+    "description": "提供数据库查询、数据操作和 Schema 管理服务",
+    "author": "AgentFlow Team",
+    "license": "MIT",
+    "homepage": "https://github.com/agentflow/mcp-database",
+    "repository": "https://github.com/agentflow/mcp-database.git",
+    "tags": ["database", "sql", "query", "data"],
+    "icon": "🗄️"
+  },
+  "transport": {
+    "type": "stdio",
+    "config": {
+      "command": "python",
+      "args": ["${SERVER_DIR}/db_server.py"],
+      "env": {
+        "DB_CONNECTION_STRING": "${ENV:DB_CONNECTION_STRING}"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "execute_query",
+      "description": "执行 SQL 查询语句（SELECT 操作）",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "SQL SELECT 查询语句"
+          },
+          "parameters": {
+            "type": "array",
+            "description": "查询参数（用于防止 SQL 注入）",
+            "items": {"type": "string"},
+            "default": []
+          },
+          "limit": {
+            "type": "integer",
+            "description": "最大返回行数",
+            "default": 1000,
+            "maximum": 10000
+          }
+        },
+        "required": ["query"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "rows": {
+            "type": "array",
+            "items": {"type": "array"}
+          },
+          "row_count": {"type": "integer"},
+          "execution_time": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "execute_command",
+      "description": "执行 SQL 命令（INSERT, UPDATE, DELETE 操作）",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "SQL 命令语句"
+          },
+          "parameters": {
+            "type": "array",
+            "description": "命令参数",
+            "items": {"type": "string"},
+            "default": []
+          }
+        },
+        "required": ["command"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "affected_rows": {"type": "integer"},
+          "last_insert_id": {"type": "integer"},
+          "execution_time": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "get_schema",
+      "description": "获取数据库表结构信息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "表名（可选，为空则返回所有表）"
+          }
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": "string"},
+                      "type": {"type": "string"},
+                      "nullable": {"type": "boolean"},
+                      "default": {"type": "string"}
+                    }
+                  }
+                },
+                "primary_key": {"type": "array", "items": {"type": "string"}},
+                "indexes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": "string"},
+                      "columns": {"type": "array", "items": {"type": "string"}},
+                      "unique": {"type": "boolean"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "analyze_table",
+      "description": "分析表数据统计信息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "要分析的表名"
+          }
+        },
+        "required": ["table"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "row_count": {"type": "integer"},
+          "size_bytes": {"type": "integer"},
+          "column_stats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "column": {"type": "string"},
+                "unique_values": {"type": "integer"},
+                "null_count": {"type": "integer"},
+                "min_value": {},
+                "max_value": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "db://connection-info",
+      "name": "Connection Information",
+      "description": "Current database connection details",
+      "mimeType": "application/json"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "skill_version": "1.0.0",
+  "skill": {
+    "name": "data-analyst",
+    "description": "强大的数据分析和可视化助手，支持统计分析、趋势预测、数据清洗和图表生成",
+    "version": "1.5.0",
+    "author": "DataAI",
+    "category": "analysis",
+    "tags": ["数据", "分析", "可视化", "统计", "图表", "预测"],
+    "price": 0.015,
+    "integration": {
+      "type": "function",
+      "config": {
+        "systemPrompt": "You are a professional data analyst with expertise in statistics, machine learning, and business intelligence.\n\nYour capabilities:\n1. Statistical analysis (descriptive, inferential, regression)\n2. Data visualization recommendations\n3. Trend analysis and forecasting\n4. Data quality assessment\n5. Insight extraction and business recommendations\n\nApproach:\n- Always validate data quality first\n- Choose appropriate statistical methods\n- Explain findings in business context\n- Provide actionable recommendations\n- Consider data limitations and caveats\n\nWhen analyzing data:\n1. Start with descriptive statistics\n2. Identify patterns and anomalies\n3. Perform deeper analysis as needed\n4. Create visualizations when helpful\n5. Summarize key insights\n\nBe thorough but concise. Focus on insights that drive decisions.",
+        "functions": [
+          {
+            "name": "analyze_dataset",
+            "description": "分析数据集并生成统计报告",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "数据集"
+                },
+                "analysis_type": {
+                  "type": "string",
+                  "description": "分析类型",
+                  "enum": ["descriptive", "correlation", "trend", "anomaly"],
+                  "default": "descriptive"
+                }
+              },
+              "required": ["data"]
+            }
+          },
+          {
+            "name": "generate_chart_config",
+            "description": "生成图表配置",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "description": "图表数据"
+                },
+                "chart_type": {
+                  "type": "string",
+                  "description": "图表类型",
+                  "enum": ["line", "bar", "pie", "scatter", "heatmap"]
+                },
+                "title": {
+                  "type": "string",
+                  "description": "图表标题"
+                }
+              },
+              "required": ["data", "chart_type"]
+            }
+          },
+          {
+            "name": "forecast_trend",
+            "description": "基于历史数据预测趋势",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "historical_data": {
+                  "type": "array",
+                  "description": "历史数据"
+                },
+                "periods": {
+                  "type": "integer",
+                  "description": "预测周期数",
+                  "default": 12
+                },
+                "method": {
+                  "type": "string",
+                  "description": "预测方法",
+                  "enum": ["linear", "exponential", "seasonal"],
+                  "default": "linear"
+                }
+              },
+              "required": ["historical_data"]
+            }
+          }
+        ]
+      }
+    },
+    "tools": [
+      {
+        "name": "analyze",
+        "description": "执行数据分析",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "要分析的数据"
+            },
+            "metrics": {
+              "type": "array",
+              "description": "要计算的指标",
+              "items": {
+                "type": "string",
+                "enum": ["mean", "median", "std", "min", "max", "count", "sum"]
+              }
+            }
+          },
+          "required": ["data"]
+        }
+      },
+      {
+        "name": "create_chart",
+        "description": "创建数据可视化图表",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "图表数据"
+            },
+            "type": {
+              "type": "string",
+              "description": "图表类型",
+              "enum": ["line", "bar", "pie", "scatter"]
+            },
+            "options": {
+              "type": "object",
+              "description": "图表配置选项"
+            }
+          },
+          "required": ["data", "type"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "input": "分析这组销售数据...",
+        "output": "数据分析结果：\n1. 平均销售额：$50,000\n2. 增长趋势：+15% YoY..."
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "skill_version": "1.0.0",
+  "skill": {
+    "name": "code-reviewer",
+    "description": "专业的代码审查助手，支持多种编程语言，可检测 bug、安全漏洞、性能问题和代码风格违规",
+    "version": "2.1.0",
+    "author": "CodeMaster",
+    "category": "code",
+    "tags": ["代码", "审查", "质量", "最佳实践", "安全", "性能"],
+    "price": 0.02,
+    "integration": {
+      "type": "prompt",
+      "config": {
+        "systemPrompt": "You are a senior software engineer and code reviewer with 15+ years of experience across multiple programming languages and frameworks.\n\nYour responsibilities:\n1. Identify bugs, logic errors, and potential runtime issues\n2. Detect security vulnerabilities (SQL injection, XSS, CSRF, etc.)\n3. Spot performance bottlenecks and optimization opportunities\n4. Check code style consistency and best practices\n5. Review architecture and design patterns\n6. Ensure proper error handling and logging\n\nReview Criteria:\n- CRITICAL: Security issues, data loss risks, crashes\n- HIGH: Logic errors, performance issues, resource leaks\n- MEDIUM: Code style, maintainability, documentation\n- LOW: Suggestions for improvement, refactoring ideas\n\nOutput Format:\nFor each issue found:\n- Severity: [CRITICAL/HIGH/MEDIUM/LOW]\n- Category: [Security/Performance/Bug/Style/Architecture]\n- Location: Line numbers or function names\n- Issue: Clear description of the problem\n- Recommendation: Specific fix with code example\n\nAlways provide constructive feedback and explain WHY something is an issue.",
+        "temperature": 0.2,
+        "maxTokens": 3000,
+        "model": "gpt-4"
+      }
+    },
+    "tools": [
+      {
+        "name": "review_code",
+        "description": "审查代码并提供改进建议",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "需要审查的代码"
+            },
+            "language": {
+              "type": "string",
+              "description": "编程语言",
+              "enum": ["python", "javascript", "typescript", "java", "go", "rust", "cpp", "csharp", "ruby", "php"]
+            },
+            "focus_areas": {
+              "type": "array",
+              "description": "重点关注领域",
+              "items": {
+                "type": "string",
+                "enum": ["security", "performance", "bugs", "style", "architecture"]
+              },
+              "default": ["security", "performance", "bugs"]
+            }
+          },
+          "required": ["code", "language"]
+        }
+      },
+      {
+        "name": "suggest_refactoring",
+        "description": "建议代码重构方案",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "需要重构的代码"
+            },
+            "goal": {
+              "type": "string",
+              "description": "重构目标",
+              "enum": ["readability", "performance", "maintainability", "testability"],
+              "default": "readability"
+            }
+          },
+          "required": ["code"]
+        }
+      },
+      {
+        "name": "check_security",
+        "description": "专门检查安全漏洞",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "需要检查的代码"
+            },
+            "language": {
+              "type": "string",
+              "description": "编程语言"
+            }
+          },
+          "required": ["code", "language"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "input": "请审查这段 Python 代码...",
+        "output": "发现以下问题：\n1. [HIGH] 第 15 行：未处理文件不存在异常..."
+      }
+    ]
+  }
+}

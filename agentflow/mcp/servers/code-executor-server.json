@@ -1,0 +1,174 @@
+{
+  "mcp_version": "1.0.0",
+  "server": {
+    "name": "code-executor-server",
+    "version": "1.0.0",
+    "description": "提供安全的代码执行环境，支持 Python、JavaScript 和 Shell 脚本",
+    "author": "AgentFlow Team",
+    "license": "MIT",
+    "homepage": "https://github.com/agentflow/mcp-code-executor",
+    "repository": "https://github.com/agentflow/mcp-code-executor.git",
+    "tags": ["code", "execution", "python", "javascript", "sandbox"],
+    "icon": "💻"
+  },
+  "transport": {
+    "type": "stdio",
+    "config": {
+      "command": "python",
+      "args": ["${SERVER_DIR}/executor_server.py"],
+      "env": {
+        "EXECUTION_TIMEOUT": "30",
+        "MAX_MEMORY_MB": "512",
+        "ALLOWED_MODULES": "math,random,datetime,json,re,string,collections,itertools"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "execute_python",
+      "description": "在沙箱环境中执行 Python 代码",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Python 代码"
+          },
+          "timeout": {
+            "type": "integer",
+            "description": "执行超时时间（秒）",
+            "default": 30,
+            "maximum": 300
+          },
+          "inputs": {
+            "type": "object",
+            "description": "传递给代码的输入变量",
+            "default": {}
+          }
+        },
+        "required": ["code"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "stdout": {"type": "string"},
+          "stderr": {"type": "string"},
+          "result": {},
+          "execution_time": {"type": "number"},
+          "exit_code": {"type": "integer"}
+        }
+      }
+    },
+    {
+      "name": "execute_javascript",
+      "description": "在沙箱环境中执行 JavaScript 代码",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "JavaScript 代码"
+          },
+          "timeout": {
+            "type": "integer",
+            "description": "执行超时时间（秒）",
+            "default": 30,
+            "maximum": 300
+          }
+        },
+        "required": ["code"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "result": {},
+          "console_output": {"type": "array", "items": {"type": "string"}},
+          "execution_time": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "execute_shell",
+      "description": "执行 Shell 命令（受限权限）",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Shell 命令"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "工作目录"
+          },
+          "timeout": {
+            "type": "integer",
+            "description": "执行超时时间（秒）",
+            "default": 30,
+            "maximum": 300
+          },
+          "env": {
+            "type": "object",
+            "description": "环境变量",
+            "default": {}
+          }
+        },
+        "required": ["command"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "stdout": {"type": "string"},
+          "stderr": {"type": "string"},
+          "exit_code": {"type": "integer"},
+          "execution_time": {"type": "number"}
+        }
+      }
+    },
+    {
+      "name": "analyze_code",
+      "description": "分析代码质量和安全性",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "要分析的代码"
+          },
+          "language": {
+            "type": "string",
+            "description": "编程语言",
+            "enum": ["python", "javascript", "typescript", "shell"]
+          }
+        },
+        "required": ["code", "language"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "severity": {"type": "string", "enum": ["error", "warning", "info"]},
+                "line": {"type": "integer"},
+                "message": {"type": "string"}
+              }
+            }
+          },
+          "complexity": {"type": "number"},
+          "suggestions": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "executor://supported-languages",
+      "name": "Supported Languages",
+      "description": "List of supported programming languages",
+      "mimeType": "application/json"
+    }
+  ]
+}
